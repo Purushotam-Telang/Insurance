@@ -3,6 +3,7 @@ package com.purushotam.Insurance.controllers;
 import com.purushotam.Insurance.dto.UserDTO;
 import com.purushotam.Insurance.exceptions.ResourceNotFoundException;
 import com.purushotam.Insurance.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO newUser){
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO newUser){
         return new ResponseEntity<>(userService.createNewUser(newUser),HttpStatus.CREATED);
     }
 
