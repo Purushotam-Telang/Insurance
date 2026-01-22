@@ -60,11 +60,8 @@ public class UserService {
     }
 
     public UserDTO updatePartialUserById(long userId, Map<String, Object> updates) {
-        try{
-            isExistsByUserId(userId);
-        }catch(ResourceNotFoundException e){
+        isExistsByUserId(userId);
 
-        }
         UserEntity userEntity = userRepo.findById(userId).get();
         updates.forEach((field, value) -> {
             Field fieldToBeUpdated = ReflectionUtils.getRequiredField(UserEntity.class, field);
@@ -75,10 +72,7 @@ public class UserService {
     }
 
     public Boolean deleteUserById(long userId) {
-        if(userRepo.existsById(userId)){
-            userRepo.deleteById(userId);
-            return true;
-        }
-        return false;
+        isExistsByUserId(userId);
+        return true;
     }
 }

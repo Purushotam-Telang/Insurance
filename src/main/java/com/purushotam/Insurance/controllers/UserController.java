@@ -1,5 +1,6 @@
 package com.purushotam.Insurance.controllers;
 
+import com.purushotam.Insurance.advices.ApiError;
 import com.purushotam.Insurance.dto.UserDTO;
 import com.purushotam.Insurance.exceptions.ResourceNotFoundException;
 import com.purushotam.Insurance.services.UserService;
@@ -29,15 +30,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable int id){
+    public ResponseEntity<UserDTO> getUserById(@PathVariable long id){
         Optional<UserDTO> userDTO = userService.getUserById(id);
-        try {
+
             return userDTO
                     .map(userDTO1 -> ResponseEntity.ok(userDTO1))
-                    .orElseThrow(()-> new ResourceNotFoundException("User not found with id :  "+id));
-        } catch (ResourceNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+                    .orElseThrow(()-> new ResourceNotFoundException("User not found with id :  "+ Long.toString(id)));
+
     }
 
     @PostMapping(path = "/add")
@@ -46,15 +45,11 @@ public class UserController {
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<UserDTO> updateUserById(@PathVariable(name = "id") long userId, @RequestBody UserDTO user){
+    public ResponseEntity<UserDTO> updateUserById(@PathVariable(name = "id") long userId, @RequestBody @Valid UserDTO user){
         Optional<UserDTO> userDTO = userService.updateUserById(userId,user);
-        try {
-            return userDTO
-                    .map(userDTO1 -> ResponseEntity.ok(userDTO1))
-                    .orElseThrow(()-> new ResourceNotFoundException("User not found with id :  "+userId));
-        } catch (ResourceNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        return userDTO
+                .map(userDTO1 -> ResponseEntity.ok(userDTO1))
+                .orElseThrow(()-> new ResourceNotFoundException("User not found with id :  "+userId));
     }
 
     @PatchMapping(path = "/{id}")
