@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> handleResourceNotFoundException(ResourceNotFoundException e) {
+    public ResponseEntity<ApiResponse<?>> handleResourceNotFoundException(ResourceNotFoundException e) {
         ApiError apiError = ApiError.builder().status(HttpStatus.NOT_FOUND).message(e.getMessage()).build();
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(buildErrorResponseEntity(apiError), apiError.getStatus());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<String> errors = e
                 .getBindingResult()
                 .getAllErrors()
@@ -36,12 +36,16 @@ public class GlobalExceptionHandler {
                 .message("Input Validation failed!!")
                 .subErrors(errors)
                 .build();
-        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(buildErrorResponseEntity(apiError), apiError.getStatus());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleException(Exception e) {
+    public ResponseEntity<ApiResponse<?>> handleException(Exception e) {
         ApiError apiError = ApiError.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(e.getMessage()).build();
-        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(buildErrorResponseEntity(apiError), apiError.getStatus());
+    }
+
+    private ApiResponse<?> buildErrorResponseEntity(ApiError apiError) {
+        return new ApiResponse<>(apiError);
     }
 }

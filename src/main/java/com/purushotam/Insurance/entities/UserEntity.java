@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -27,6 +28,7 @@ public class UserEntity{
     private String lastName;
     private String email;
     private String password;
+    @UpdateTimestamp
     private Date passwordChangeDate;
     private String role;
 }
