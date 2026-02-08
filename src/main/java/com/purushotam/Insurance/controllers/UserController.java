@@ -5,6 +5,7 @@ import com.purushotam.Insurance.dto.UserDTO;
 import com.purushotam.Insurance.exceptions.ResourceNotFoundException;
 import com.purushotam.Insurance.services.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping(path = "/page")
+    public ResponseEntity<List<UserDTO>> getAllUsersPage(@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "0") int pageNumber){
+        return ResponseEntity.ok(userService.getAllUsersPage(sortBy,pageNumber));
     }
 
     @GetMapping(path = "/{id}")

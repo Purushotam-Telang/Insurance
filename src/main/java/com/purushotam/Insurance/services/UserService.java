@@ -4,7 +4,11 @@ import com.purushotam.Insurance.dto.UserDTO;
 import com.purushotam.Insurance.entities.UserEntity;
 import com.purushotam.Insurance.exceptions.ResourceNotFoundException;
 import com.purushotam.Insurance.repositories.UserRepo;
+import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.util.ReflectionUtils;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,7 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepo userRepo;
     private final ModelMapper modelMapper;
+    private final int PAGE_SIZE = 10;
 
     public UserService(UserRepo userRepo, ModelMapper modelMapper) {
         this.userRepo = userRepo;
@@ -28,6 +33,14 @@ public class UserService {
 
     public List<UserDTO> getAllUsers() {
         List<UserEntity> userEntities = userRepo.findAll();
+        return userEntities
+                .stream()
+                .map(userEntity -> modelMapper.map(userEntity, UserDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserDTO> getAllUsersPage(String sortBy, int pageNumber) {
+        List<UserEntity> userEntities = userRepo.findAll(PageRequest.of(pageNumber,PAGE_SIZE,Sort.by(Sort.Order.asc(sortBy)))).getContent();
         return userEntities
                 .stream()
                 .map(userEntity -> modelMapper.map(userEntity, UserDTO.class))
@@ -75,4 +88,6 @@ public class UserService {
         isExistsByUserId(userId);
         return true;
     }
+
+
 }
